@@ -1,30 +1,32 @@
 const express = require('express');
 const http = require('http');
-const socketIo = require('socket.io');
-const cors = require('cors'); // Import the CORS package
+const { Server } = require('socket.io');
+const cors = require('cors');
 
 const app = express();
-app.use(cors()); // Enable CORS
+app.use(cors());
 
 const server = http.createServer(app);
-const io = socketIo(server, {
-    cors: {
-        origin: ["https://websockets-sess-demo.netlify.app","http://localhost:5173"], 
-        methods: ["GET", "POST"] // Allowed methods
-    }
+const io = new Server(server, {
+  cors: {
+    origin: ['https://websockets-sess-demo.netlify.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST'],
+  },
 });
 
 io.on('connection', (socket) => {
-    console.log('New client connected');
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
-    });
+  console.log('A user connected');
 
-    socket.on('message', (data) => {
-        console.log(`Message received: ${data}`);
-        io.emit('message', data);
-    });
+  socket.on('message', (data) => {
+    const { username, message } = data;
+    io.emit('message', { username, message });  
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
 });
 
-const PORT = 5001;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(5001, () => {
+  console.log('Listening on port 5001');
+});
