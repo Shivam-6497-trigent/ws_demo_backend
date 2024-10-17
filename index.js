@@ -9,7 +9,7 @@ app.use(cors()); // Enable CORS
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: "http://localhost:5173", // Allow requests from this origin
+        origin: "https://websockets-sess-demo.netlify.app/", // Allow requests from this origin
         methods: ["GET", "POST"] // Allowed methods
     }
 });
